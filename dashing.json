@@ -1,0 +1,18 @@
+{
+    "name": "Screeps",
+    "package": "Screeps",
+    "index": "index.html",
+    "selectors": {
+        ".api-property--property  span.api-property__name": {
+            "type": "Property",
+            "matchpath": "api[/\\\\]index\\.html"
+        },
+        ".api-property--method  span.api-property__name": {
+            "type": "Method",
+            "matchpath": "api[/\\\\]index\\.html"
+        }
+    },
+    "icon32x32": "icon.png",
+    "allowJS": false,
+    "ExternalURL": "https://docs.screeps.com/"
+}
