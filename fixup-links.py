@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 import re
 
 TOC_DIVIDER_MAP = {
-    'Global Objects': 'Object',
-    'Prototypes': 'Class',
+    'Global Objects': 'malt3-marker__object',
+    'Prototypes': 'malt3-marker__class',
 }
 
 FILES_TO_FIXUP = [
@@ -168,10 +168,8 @@ def apiAddTocLinks(toc, soup):
         for entry in entries_for_type:
             # first add an href to the first level entry
             heading_tag = soup.select_one(entry['first_level'])
-            tag = soup.new_tag("a")
-            tag['name'] = f"//apple_ref/cpp/{TOC_DIVIDER_MAP[entry_type_name]}/{heading_tag.text.strip()}"
-            tag['class'] = "dashAnchor"
-            heading_tag.insert_after(tag)
+            heading_tag['class'] = TOC_DIVIDER_MAP[entry_type_name]
+            pass
 
 def removeToc(soup):
     wrapper = soup.find("div", class_="page-wrapper")

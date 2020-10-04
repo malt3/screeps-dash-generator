@@ -10,6 +10,14 @@
         ".api-property--method  span.api-property__name": {
             "type": "Method",
             "matchpath": "api[/\\\\]index\\.html"
+        },
+        ".malt3-marker__object": {
+            "type": "Object",
+            "matchpath": "api[/\\\\]index\\.html"
+        },
+        ".malt3-marker__class": {
+            "type": "Class",
+            "matchpath": "api[/\\\\]index\\.html"
         }
     },
     "icon32x32": "icon.png",
