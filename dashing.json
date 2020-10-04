@@ -18,9 +18,13 @@
         ".malt3-marker__class": {
             "type": "Class",
             "matchpath": "api[/\\\\]index\\.html"
+        },
+        ".malt3-marker__constant": {
+            "type": "Constant",
+            "matchpath": "api[/\\\\]index\\.html"
         }
     },
     "icon32x32": "icon.png",
-    "allowJS": false,
+    "allowJS": true,
     "ExternalURL": "https://docs.screeps.com/"
 }

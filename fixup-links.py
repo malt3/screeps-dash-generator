@@ -93,14 +93,24 @@ FILES_TO_FIXUP = [
     Path("api/Tombstone.html"),
 ]
 
-def cleanFile(filename):
+def read_soup(filename):
     # get file contents
-    print('\n')
-    print(filename)
     f = open(filename, "rb")
     html_doc = f.read()
     f.close()
-    soup = BeautifulSoup(html_doc, 'html.parser')
+    return BeautifulSoup(html_doc, 'html.parser')
+
+
+def write_soup(filename, soup):
+    # write changes back to the file
+    f = open(filename, "wb")
+    f.write(soup.prettify(soup.original_encoding))
+    f.close()
+
+def cleanFile(filename):
+    print('\n')
+    print(filename)
+    soup = read_soup(filename)
 
     # search and modify  all links (anchor tags) that start with "/" and end with "/" AND "/api" (damn edge case...)
     directory_links = []
@@ -114,10 +124,21 @@ def cleanFile(filename):
         anchor['href'] = hrefParts[0] + 'index.html'+ ('#'+hrefParts[1] if len(hrefParts) > 1 else '')
         print(f'{before} => {anchor["href"]}')
     
-    # write changes back to the file
-    f = open(filename, "wb")
-    f.write(soup.prettify(soup.original_encoding))
-    f.close()
+    write_soup(filename, soup)
+    
+
+
+def findConstants(filename):
+    # find constants within "api/index.html" and add a custom class as marker
+    soup = read_soup(filename)
+    constantsHeader = soup.find(id='Constants')
+    constantsPre = constantsHeader.find_next_sibling('pre')
+    constantsCode = constantsPre.code
+    possibleConstants = constantsCode.select('code > .token.constant')
+    topLevelConstants = [c for c in possibleConstants if str(c.previous_sibling).endswith('\n    ')]
+    for constant in topLevelConstants:
+        constant.get('class').append('malt3-marker__constant')
+    write_soup(filename, soup)
 
 def apiTocGetAnchors(soup):
     dividers = soup.select("#toc > ul > li.tocify-item.divider")
@@ -142,7 +163,6 @@ def apiTocGetAnchors(soup):
         if divider is not None:
             # new topic
             current_topic = divider.text.strip()
-            print("\n"+current_topic)
             toc[current_topic] = []
             continue
         if second_level_header == None:
@@ -160,6 +180,8 @@ def apiTocGetAnchors(soup):
                 }
             )
     
+    for topic in toc:
+        print(f'{topic} has {len(toc[topic])} entries')
     return toc
 
 def apiAddTocLinks(toc, soup):
@@ -202,4 +224,5 @@ if __name__ == "__main__":
         base_path = Path(args.path)
     for filename in FILES_TO_FIXUP:
         cleanFile(base_path / filename)
+    findConstants(base_path / Path('api/index.html'))
     fixToc(base_path / Path('api/index.html'))
